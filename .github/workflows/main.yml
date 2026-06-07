@@ -9,12 +9,14 @@ jobs:
 
       - name: Unzip and Prepare Project
         run: |
-          unzip project.zip -d extracted_project
-          # التحقق من وجود ملف build.gradle في المجلد المستخرج أو المجلد الفرعي
+          # فك ضغط أي ملف zip موجود تلقائياً لتفادي مشاكل الحروف العربية
+          unzip *.zip -d extracted_project
+          
+          # التحقق من مكان الملفات ونقلها للجذر الرئيسي
           if [ -f extracted_project/build.gradle ] || [ -f extracted_project/build.gradle.kts ]; then
             mv extracted_project/* .
           else
-            # لو الملفات جوه مجلد فرعي، ادخل جواه
+            # لو الملفات جوه مجلد فرعي
             mv extracted_project/*/* .
           fi
 
