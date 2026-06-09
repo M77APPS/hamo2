@@ -1,112 +1,183 @@
 # ====================================================================
 # THE OMNIPOTENT ANDROID MULTI-FORMAT COMPILER & ROOT AUTO-DISCOVERER
 # ====================================================================
-# Designed by: Hamo Electronic Cyber-Defense Platform (Updated 2026)
-# Version: 5.0.0 (Absolute Universal Edition)
+# Designed by: Hamo Electronic Cyber-Defense Platform (Fixed Edition)
+# Version: 5.0.2 (Absolute Clean ASCII Edition)
 # Supports: .zip, .rar, .7z, .tar, .tar.gz, .tgz
 # Automation Level: 100% (Zero Configuration Required)
 
 name: Omnipotent Android APK Builder Master Pro
 
 on:
-  push:
-    branches: [ "main", "master" ]
-  pull_request:
-    branches: [ "main", "master" ]
-  workflow_dispatch: # Allows manual one-click compilation from GitHub UI
+  push:
+    branches: [ "main", "master" ]
+  pull_request:
+    branches: [ "main", "master" ]
+  workflow_dispatch:
 
 env:
-  DEFAULT_JAVA_VERSION: "17"
-  FALLBACK_JAVA_VERSION: "21"
-  GRADLE_JVM_ARGS: "-Xmx3072m -XX:MaxMetaspaceSize=512m"
+  DEFAULT_JAVA_VERSION: "17"
+  FALLBACK_JAVA_VERSION: "21"
+  GRADLE_JVM_ARGS: "-Xmx3072m -XX:MaxMetaspaceSize=512m"
 
 jobs:
-  omni_build:
-    name: Universal Reverse Engine & Compilation Core
-    runs-on: ubuntu-latest
+  omni_build:
+    name: Universal Reverse Engine & Compilation Core
+    runs-on: ubuntu-latest
 
-    steps:
-      - name: 1. Initialization & Workspace Checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 1
+    steps:
+      - name: 1. Initialization & Workspace Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
 
-      - name: 2. Environment Upgrade & Heavy Extraction Tools Setup
-        run: |
-          echo "=== Upgrading Environment Packages ==="
-          sudo apt-get update -y
-          echo "=== Installing Extraction Armaments (Unrar, P7zip, Unzip, Tar) ==="
-          sudo apt-get install -y unzip p7zip-full unrar tar gzip
-          echo "=== Checking Installation Status ==="
-          which unzip && which 7z && which unrar && which tar
+      - name: 2. Environment Upgrade & Heavy Extraction Tools Setup
+        run: |
+          echo "=== Upgrading Environment Packages ==="
+          sudo apt-get update -y
+          echo "=== Installing Extraction Armaments (Unrar, P7zip, Unzip, Tar) ==="
+          sudo apt-get install -y unzip p7zip-full unrar tar gzip
+          echo "=== Checking Installation Status ==="
+          which unzip && which 7z && which unrar && which tar
 
-      - name: 3. Dynamic Multi-Format Archive Hunter & Auto-Extractor
-        run: |
-          echo "=== Starting Omnipotent Scan for Archive Files ==="
-          FOUND_ARCHIVE=""
-          
-          # Hunting array for all known archive extensions
-          for ext in zip rar 7z tar.gz tgz tar; do
-            MATCH=$(find . -maxdepth 2 -type f -iname "*.$ext" | head -n 1)
-            if [ -n "$MATCH" ]; then
-              FOUND_ARCHIVE="$MATCH"
-              ARCHIVE_EXT="$ext"
-              break
-            fi
-          done
+      - name: 3. Dynamic Multi-Format Archive Hunter & Auto-Extractor
+        run: |
+          echo "=== Starting Omnipotent Scan for Archive Files ==="
+          FOUND_ARCHIVE=""
+          ARCHIVE_EXT=""
+          
+          for ext in zip rar 7z tar.gz tgz tar; do
+            MATCH=$(find . -maxdepth 2 -type f -iname "*.$ext" | head -n 1)
+            if [ -n "$MATCH" ]; then
+              FOUND_ARCHIVE="$MATCH"
+              ARCHIVE_EXT="$ext"
+              break
+            fi
+          done
 
-          if [ -z "$FOUND_ARCHIVE" ]; then
-            echo "⚠️ Notice: No compressed archive found in workspace root."
-            echo "Checking if raw source code repository is already extracted..."
-            if find . -name "build.gradle*" | read; then
-              echo "✅ Raw Android project structure already exists. Skipping extraction."
-              exit 0
-            else
-              echo "❌ CRITICAL ERROR: No archive (.zip, .rar, .7z, .tar) and no raw build.gradle detected!"
-              exit 1
-            fi
-          fi
+          if [ -z "$FOUND_ARCHIVE" ]; then
+            echo "⚠️ Notice: No compressed archive found in workspace root."
+            echo "Checking if raw source code repository is already extracted..."
+            if [ -n "$(find . -maxdepth 3 -name 'build.gradle*' -print -quit)" ]; then
+              echo "✅ Raw Android project structure already exists. Skipping extraction."
+              exit 0
+            else
+              echo "❌ CRITICAL ERROR: No archive (.zip, .rar, .7z, .tar) and no raw build.gradle detected!"
+              exit 1
+            fi
+          fi
 
-          echo "🎯 Target Archive Discovered: $FOUND_ARCHIVE (Type: $ARCHIVE_EXT)"
-          mkdir -p omni_extracted_workspace
+          echo "🎯 Target Archive Discovered: $FOUND_ARCHIVE (Type: $ARCHIVE_EXT)"
+          mkdir -p omni_extracted_workspace
 
-          echo "=== Executing Safe Extraction Sequence ==="
-          case "$ARCHIVE_EXT" in
-            zip)
-              unzip -o "$FOUND_ARCHIVE" -d omni_extracted_workspace
-              ;;
-            rar)
-              unrar x -o+ "$FOUND_ARCHIVE" omni_extracted_workspace/
-              ;;
-            7z)
-              7z x "$FOUND_ARCHIVE" -oomni_extracted_workspace/ -y
-              ;;
-            tar.gz|tgz)
-              tar -xzf "$FOUND_ARCHIVE" -C omni_extracted_workspace/
-              ;;
-            tar)
-              tar -xf "$FOUND_ARCHIVE" -C omni_extracted_workspace/
-              ;;
-          esac
+          echo "=== Executing Safe Extraction Sequence ==="
+          case "$ARCHIVE_EXT" in
+            zip)
+              unzip -o "$FOUND_ARCHIVE" -d omni_extracted_workspace
+              ;;
+            rar)
+              unrar x -o+ "$FOUND_ARCHIVE" omni_extracted_workspace/
+              ;;
+            7z)
+              7z x "$FOUND_ARCHIVE" -oomni_extracted_workspace/ -y
+              ;;
+            tar.gz|tgz)
+              tar -xzf "$FOUND_ARCHIVE" -C omni_extracted_workspace/
+              ;;
+            tar)
+              tar -xf "$FOUND_ARCHIVE" -C omni_extracted_workspace/
+              ;;
+          esac
 
-          echo "Cleaning up the original compressed file to free cloud memory..."
-          rm -f "$FOUND_ARCHIVE"
+          echo "Cleaning up the original compressed file to free cloud memory..."
+          rm -f "$FOUND_ARCHIVE"
 
-      - name: 4. Deep Root Directory Discovery & Structural Correction
-        run: |
-          if [ ! -d omni_extracted_workspace ]; then
-            echo "Workspace already finalized in previous step."
-            exit 0
-          fi
+      - name: 4. Deep Root Directory Discovery & Structural Correction
+        run: |
+          if [ ! -d omni_extracted_workspace ]; then
+            echo "Workspace already finalized in previous step."
+            exit 0
+          fi
 
-          echo "=== Hunting for the Absolute Project Root ==="
-          # Searches for the real folder containing build.gradle or build.gradle.kts
-          TRUE_ROOT=$(find omni_extracted_workspace -name "build.gradle*" -exec dirname {} \; | head -n 1)
+          echo "=== Hunting for the Absolute Project Root ==="
+          TRUE_ROOT=$(find omni_extracted_workspace -name "build.gradle*" -exec dirname {} \; | head -n 1)
 
-          if [ -z "$TRUE_ROOT" ]; then
-            echo "❌ CRITICAL ERROR: Extracted files do not contain any Android build.gradle configuration!"
-            exit 1
-          fi
+          if [ -z "$TRUE_ROOT" ]; then
+            echo "❌ CRITICAL ERROR: Extracted files do not contain any Android build.gradle configuration!"
+            exit 1
+          fi
+
+          echo "✅ Absolute Root Located At: -> $TRUE_ROOT"
+          
+          echo "=== Relocating Project to Master Workspace Root ==="
+          if [ "$TRUE_ROOT" != "." ] && [ "$TRUE_ROOT" != "./" ]; then
+            mv "$TRUE_ROOT"/* . 2>/dev/null || true
+            mv "$TRUE_ROOT"/.* . 2>/dev/null || true
+          fi
+          
+          echo "=== Purging Leftover Cache Folders ==="
+          rm -rf omni_extracted_workspace
+          find . -name "local.properties" -delete
+          find . -name ".gradle" -type d -exec rm -rf {} + || true
+          find . -name ".idea" -type d -exec rm -rf {} + || true
+
+      - name: 5. Intelligent Java Runtime Detection & Deployment
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: ${{ env.DEFAULT_JAVA_VERSION }}
+          cache: 'gradle'
+
+      - name: 6. Autonomous Gradle Wrapper Engine Repair
+        run: |
+          echo "=== Auditing Gradle Wrapper Executables ==="
+          if [ ! -f gradlew ]; then
+            echo "⚠️ Warning: 'gradlew' bootstrapper script is missing in this project!"
+            echo "Generating high-compatibility Gradle environment (Version 8.5) automatically..."
+            gradle wrapper --gradle-version 8.5
+          fi
+          
+          echo "=== Enforcing Global Script Execution Permissions ==="
+          chmod +x gradlew
+          echo "=== Cleaning Windows Carriage Returns (CRLF to LF Line Fixes) ==="
+          sed -i 's/\r$//' gradlew
+
+      - name: 7. Universal Encryption Key Staging (Seeding Debug Keystore)
+        run: |
+          echo "=== Generating Universal Android Debug Cryptographic Key ==="
+          keytool -genkey -v -keystore global_debug.keystore -storepass android -alias androiddebugkey -keypass android -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=Hamo Electronic,O=CyberDefense,C=EG" || true
+          
+          echo "=== Injecting Cryptographic Keys to Sub-Modules ==="
+          find . -type d -name "app" -exec cp global_debug.keystore {}/debug.keystore \; || true
+          find . -type d -name "src" -exec dirname {} \; | xargs -I {} cp global_debug.keystore {}/debug.keystore || true
+          rm -f global_debug.keystore
+
+      - name: 8. Triggering Deep Cloud Compilation Engine
+        run: |
+          export GRADLE_OPTS="-Dorg.gradle.jvmargs=${{ env.GRADLE_JVM_ARGS }} -Dorg.gradle.workers.max=4"
+          echo "Starting production compilation with parameters: $GRADLE_OPTS"
+          
+          ./gradlew assembleDebug --stacktrace --no-daemon || {
+            echo "⚠️ Initial build phase failed. Attempting automatic upgrade to Java version ${{ env.FALLBACK_JAVA_VERSION }}..."
+            sudo apt-get install -y openjdk-21-jdk
+            export JAVA_HOME=/usr/lib/jvm/java-21-openjdk-amd64
+            ./gradlew assembleDebug --stacktrace --no-daemon
+          }
+
+      - name: 9. Post-Compilation Mapping & Diagnostics
+        run: |
+          echo "=== Final Workspace Audit ==="
+          ls -la
+          echo "=== Compiled APK Output Registry ==="
+          find . -name "*.apk" -type f
+
+      - name: 10. Extracting and Uploading the Final Built APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: Hamo-Electronic-Unified-APK
+          path: "**/build/outputs/apk/debug/*.apk"
+          retention-days: 7
+          if-no-files-found: error          fi
 
           echo "✅ Absolute Root Located At: -> $TRUE_ROOT"
           
