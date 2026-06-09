@@ -1,10 +1,10 @@
 # ====================================================================
 # THE OMNIPOTENT ANDROID MULTI-FORMAT COMPILER & ROOT AUTO-DISCOVERER
 # ====================================================================
-# Designed by: Hamo Electronic Cyber-Defense Platform (Ultra-Clean Patch)
-# Version: 5.1.0 (Absolute Universal Edition - Java 21 & Cache Purge)
-# Supports: .zip, .rar, .7z, .tar, .tar.gz, .tgz
-# Automation Level: 100% (Strict Anti-Conflict Mode)
+# Designed by: Hamo Electronic Cyber-Defense Platform (Omnipotent Edition)
+# Version: 6.0.0 (Absolute Universal Industrial Grade - Anti-KSP Crash)
+# Supports: Any Android Project Structure inside (.zip, .rar, .7z, .tar, .tgz)
+# Automation Level: 100% (Full Environmental & Property Virtualization)
 
 name: Omnipotent Android APK Builder Master Pro
 
@@ -17,7 +17,8 @@ on:
 
 env:
   DEFAULT_JAVA_VERSION: "21"
-  GRADLE_JVM_ARGS: "-Xmx3072m -XX:MaxMetaspaceSize=512m"
+  # Hardening the JVM parameters against Headless AWT and KSP isolation crashes
+  GRADLE_OPTS: "-Dorg.gradle.jvmargs=-Xmx4096m -XX:MaxMetaspaceSize=1024m -Djava.awt.headless=true -Dsun.awt.enableRemoteBlockedCheck=true"
 
 jobs:
   omni_build:
@@ -35,7 +36,7 @@ jobs:
           echo "=== Upgrading Environment Packages ==="
           sudo apt-get update -y
           echo "=== Installing Extraction Armaments (Unrar, P7zip, Unzip, Tar) ==="
-          sudo apt-get install -y unzip p7zip-full unrar tar gzip
+          sudo apt-get install -y unzip p7zip-full unrar tar gzip coreutils sed
           echo "=== Checking Installation Status ==="
           which unzip && which 7z && which unrar && which tar
 
@@ -153,7 +154,39 @@ jobs:
           echo "=== Cleaning Windows Carriage Returns (CRLF to LF Line Fixes) ==="
           sed -i 's/\r$//' gradlew
 
-      - name: 7. Universal Encryption Key Staging (Seeding Debug Keystore)
+      - name: 7. Cybernetic Properties Injection (Anti-KSP & Isolation Layer)
+        run: |
+          echo "=== Inoculating gradle.properties against CI Crashes ==="
+          PROP_FILE="gradle.properties"
+          if [ ! -f "$PROP_FILE" ]; then
+            touch "$PROP_FILE"
+          fi
+          
+          # Force injection of headless options and disable incremental bugs that cause KSP NullPointerException
+          cat <<EOF >> "$PROP_FILE"
+          org.gradle.jvmargs=-Xmx4096m -XX:MaxMetaspaceSize=1024m -Djava.awt.headless=true
+          android.useAndroidX=true
+          android.enableJetifier=true
+          ksp.incremental=false
+          kotlin.incremental=false
+          org.gradle.parallel=false
+          org.gradle.configureondemand=false
+          EOF
+          
+          echo "=== Hardened Properties Successfully Registered ==="
+          cat "$PROP_FILE"
+
+      - name: 8. Auto-Heal Project Repositories (Missing Artifacts Fixer)
+        run: |
+          echo "=== Injecting Missing Central Repositories into build.gradle files ==="
+          find . -name "build.gradle" -o -name "build.gradle.kts" | while read -r file; do
+            if [ -f "$file" ]; then
+              # Injecting repositories securely if missing
+              sed -i 's/repositories {/repositories { \n        google() \n        mavenCentral()/g' "$file" || true
+            fi
+          done
+
+      - name: 9. Universal Encryption Key Staging (Seeding Debug Keystore)
         run: |
           echo "=== Generating Universal Android Debug Cryptographic Key ==="
           keytool -genkey -v -keystore global_debug.keystore -storepass android -alias androiddebugkey -keypass android -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=Hamo Electronic,O=CyberDefense,C=EG" || true
@@ -163,25 +196,28 @@ jobs:
           find . -type d -name "src" -exec dirname {} \; | xargs -I {} cp global_debug.keystore {}/debug.keystore || true
           rm -f global_debug.keystore
 
-      - name: 8. Triggering Deep Cloud Compilation Engine
+      - name: 10. Triggering Deep Cloud Compilation Engine (Multi-Phase Fallback)
         run: |
-          export GRADLE_OPTS="-Dorg.gradle.jvmargs=${{ env.GRADLE_JVM_ARGS }} -Dorg.gradle.workers.max=4"
-          echo "Starting production compilation with parameters: $GRADLE_OPTS"
+          echo "Starting production compilation with Strict Execution parameters..."
           
           echo "=== Step A: Hard Cleaning Project Artifacts ==="
-          ./gradlew clean --no-configuration-cache --no-daemon
+          ./gradlew clean --no-configuration-cache --no-daemon -Djava.awt.headless=true
           
-          echo "=== Step B: Launching Absolute Compilation Sequence ==="
-          ./gradlew assembleDebug --no-configuration-cache --stacktrace --no-daemon
+          echo "=== Step B: Launching Primary Compilation Sequence ==="
+          # Running with single-worker execution if KSP thread isolation fails, completely cutting off multi-thread leaks
+          ./gradlew assembleDebug --no-configuration-cache --stacktrace --no-daemon -Djava.awt.headless=true -Dorg.gradle.workers.max=1 || {
+            echo "⚠️ Primary compilation interrupted. Executing ultimate sub-task fallback extraction..."
+            ./gradlew :app:assembleDebug --no-configuration-cache --no-daemon -Djava.awt.headless=true -Dorg.gradle.workers.max=1
+          }
 
-      - name: 9. Post-Compilation Mapping & Diagnostics
+      - name: 11. Post-Compilation Mapping & Diagnostics
         run: |
           echo "=== Final Workspace Audit ==="
           ls -la
           echo "=== Compiled APK Output Registry ==="
           find . -name "*.apk" -type f
 
-      - name: 10. Extracting and Uploading the Final Built APK
+      - name: 12. Extracting and Uploading the Final Built APK
         uses: actions/upload-artifact@v4
         with:
           name: Hamo-Electronic-Unified-APK
