@@ -2,9 +2,9 @@
 # THE OMNIPOTENT ANDROID MULTI-FORMAT COMPILER & ROOT AUTO-DISCOVERER
 # ====================================================================
 # Designed by: Hamo Electronic Cyber-Defense Platform (Omnipotent Edition)
-# Version: 6.0.0 (Absolute Universal Industrial Grade - Anti-KSP Crash)
+# Version: 6.5.0 (Absolute Universal Industrial Grade - Total Keystore Seeder)
 # Supports: Any Android Project Structure inside (.zip, .rar, .7z, .tar, .tgz)
-# Automation Level: 100% (Full Environmental & Property Virtualization)
+# Automation Level: 100% (Absolute Path Virtualization)
 
 name: Omnipotent Android APK Builder Master Pro
 
@@ -17,7 +17,6 @@ on:
 
 env:
   DEFAULT_JAVA_VERSION: "21"
-  # Hardening the JVM parameters against Headless AWT and KSP isolation crashes
   GRADLE_OPTS: "-Dorg.gradle.jvmargs=-Xmx4096m -XX:MaxMetaspaceSize=1024m -Djava.awt.headless=true -Dsun.awt.enableRemoteBlockedCheck=true"
 
 jobs:
@@ -162,7 +161,6 @@ jobs:
             touch "$PROP_FILE"
           fi
           
-          # Force injection of headless options and disable incremental bugs that cause KSP NullPointerException
           cat <<EOF >> "$PROP_FILE"
           org.gradle.jvmargs=-Xmx4096m -XX:MaxMetaspaceSize=1024m -Djava.awt.headless=true
           android.useAndroidX=true
@@ -181,20 +179,31 @@ jobs:
           echo "=== Injecting Missing Central Repositories into build.gradle files ==="
           find . -name "build.gradle" -o -name "build.gradle.kts" | while read -r file; do
             if [ -f "$file" ]; then
-              # Injecting repositories securely if missing
               sed -i 's/repositories {/repositories { \n        google() \n        mavenCentral()/g' "$file" || true
             fi
           done
 
-      - name: 9. Universal Encryption Key Staging (Seeding Debug Keystore)
+      - name: 9. Universal Encryption Key Staging (Global Absolute Path Seeding)
         run: |
           echo "=== Generating Universal Android Debug Cryptographic Key ==="
-          keytool -genkey -v -keystore global_debug.keystore -storepass android -alias androiddebugkey -keypass android -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=Hamo Electronic,O=CyberDefense,C=EG" || true
+          # Generating directly in the root workspace to satisfy absolute path configurations
+          keytool -genkey -v -keystore debug.keystore -storepass android -alias androiddebugkey -keypass android -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=Hamo Electronic,O=CyberDefense,C=EG" || true
           
-          echo "=== Injecting Cryptographic Keys to Sub-Modules ==="
-          find . -type d -name "app" -exec cp global_debug.keystore {}/debug.keystore \; || true
-          find . -type d -name "src" -exec dirname {} \; | xargs -I {} cp global_debug.keystore {}/debug.keystore || true
-          rm -f global_debug.keystore
+          echo "=== Replicating Keystore Across All Structural Nodes ==="
+          # 1. Copy to the absolute project root (fixes the exact current error)
+          cp debug.keystore ./debug.keystore || true
+          
+          # 2. Copy to sub-module folder 'app'
+          if [ -d "app" ]; then
+            cp debug.keystore app/debug.keystore || true
+          fi
+          
+          # 3. Dynamic injection to every folder hosting a build configuration file
+          find . -name "build.gradle" -o -name "build.gradle.kts" | while read -r file; do
+            DIR=$(dirname "$file")
+            echo "Seeding backup keystore into node: $DIR"
+            cp debug.keystore "$DIR/debug.keystore" || true
+          done
 
       - name: 10. Triggering Deep Cloud Compilation Engine (Multi-Phase Fallback)
         run: |
@@ -204,7 +213,6 @@ jobs:
           ./gradlew clean --no-configuration-cache --no-daemon -Djava.awt.headless=true
           
           echo "=== Step B: Launching Primary Compilation Sequence ==="
-          # Running with single-worker execution if KSP thread isolation fails, completely cutting off multi-thread leaks
           ./gradlew assembleDebug --no-configuration-cache --stacktrace --no-daemon -Djava.awt.headless=true -Dorg.gradle.workers.max=1 || {
             echo "⚠️ Primary compilation interrupted. Executing ultimate sub-task fallback extraction..."
             ./gradlew :app:assembleDebug --no-configuration-cache --no-daemon -Djava.awt.headless=true -Dorg.gradle.workers.max=1
