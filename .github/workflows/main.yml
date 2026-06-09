@@ -1,10 +1,10 @@
 # ====================================================================
 # THE OMNIPOTENT ANDROID MULTI-FORMAT COMPILER & ROOT AUTO-DISCOVERER
 # ====================================================================
-# Designed by: Hamo Electronic Cyber-Defense Platform (Fixed Edition)
-# Version: 5.0.3 (Absolute Clean ASCII Edition)
+# Designed by: Hamo Electronic Cyber-Defense Platform (Auto-Wrapper Patch)
+# Version: 5.0.5 (Absolute Universal Edition - Modern Gradle Support)
 # Supports: .zip, .rar, .7z, .tar, .tar.gz, .tgz
-# Automation Level: 100% (Zero Configuration Required)
+# Automation Level: 100% (Smart Auto-Upgrader Enabled)
 
 name: Omnipotent Android APK Builder Master Pro
 
@@ -128,13 +128,26 @@ jobs:
           java-version: ${{ env.DEFAULT_JAVA_VERSION }}
           cache: 'gradle'
 
-      - name: 6. Autonomous Gradle Wrapper Engine Repair
+      - name: 6. Autonomous Gradle Wrapper Engine Repair & Auto-Upgrader
         run: |
           echo "=== Auditing Gradle Wrapper Executables ==="
+          
+          # Check if gradle-wrapper.properties exists and proactively force update its version to match 2026 requirements
+          WRAPPER_PROP=$(find . -name "gradle-wrapper.properties" | head -n 1)
+          if [ -n "$WRAPPER_PROP" ]; then
+            echo "Found existing gradle configuration at: $WRAPPER_PROP"
+            echo "Forcing distributionUrl upgrade to version 9.3.1 to satisfy modern AGP requirements..."
+            sed -i 's/gradle-.*-bin.zip/gradle-9.3.1-bin.zip/g' "$WRAPPER_PROP"
+            sed -i 's/gradle-.*-all.zip/gradle-9.3.1-all.zip/g' "$WRAPPER_PROP"
+          fi
+
           if [ ! -f gradlew ]; then
             echo "⚠️ Warning: 'gradlew' bootstrapper script is missing in this project!"
-            echo "Generating high-compatibility Gradle environment (Version 8.5) automatically..."
-            gradle wrapper --gradle-version 8.5
+            echo "Generating clean high-compatibility Gradle environment (Version 9.3.1) automatically..."
+            gradle wrapper --gradle-version 9.3.1
+          else
+            echo "Updating existing gradlew script target to 9.3.1..."
+            gradle wrapper --gradle-version 9.3.1 || true
           fi
           
           echo "=== Enforcing Global Script Execution Permissions ==="
@@ -158,7 +171,7 @@ jobs:
           echo "Starting production compilation with parameters: $GRADLE_OPTS"
           
           ./gradlew assembleDebug --stacktrace --no-daemon || {
-            echo "⚠️ Initial build phase failed. Attempting automatic upgrade to Java version 21..."
+            echo "⚠️ Build issue encountered. Forcing execution with modern Java 21 environment..."
             sudo apt-get install -y openjdk-21-jdk
             export JAVA_HOME=/usr/lib/jvm/java-21-openjdk-amd64
             ./gradlew assembleDebug --stacktrace --no-daemon
