@@ -1,10 +1,10 @@
 # ====================================================================
 # THE OMNIPOTENT ANDROID MULTI-FORMAT COMPILER & ROOT AUTO-DISCOVERER
 # ====================================================================
-# Designed by: Hamo Electronic Cyber-Defense Platform (Auto-Wrapper Patch)
-# Version: 5.0.5 (Absolute Universal Edition - Modern Gradle Support)
+# Designed by: Hamo Electronic Cyber-Defense Platform (Ultra-Clean Patch)
+# Version: 5.1.0 (Absolute Universal Edition - Java 21 & Cache Purge)
 # Supports: .zip, .rar, .7z, .tar, .tar.gz, .tgz
-# Automation Level: 100% (Smart Auto-Upgrader Enabled)
+# Automation Level: 100% (Strict Anti-Conflict Mode)
 
 name: Omnipotent Android APK Builder Master Pro
 
@@ -16,8 +16,7 @@ on:
   workflow_dispatch:
 
 env:
-  DEFAULT_JAVA_VERSION: "17"
-  FALLBACK_JAVA_VERSION: "21"
+  DEFAULT_JAVA_VERSION: "21"
   GRADLE_JVM_ARGS: "-Xmx3072m -XX:MaxMetaspaceSize=512m"
 
 jobs:
@@ -120,6 +119,7 @@ jobs:
           find . -name "local.properties" -delete
           find . -name ".gradle" -type d -exec rm -rf {} + || true
           find . -name ".idea" -type d -exec rm -rf {} + || true
+          find . -name "build" -type d -exec rm -rf {} + || true
 
       - name: 5. Intelligent Java Runtime Detection & Deployment
         uses: actions/setup-java@v4
@@ -132,7 +132,6 @@ jobs:
         run: |
           echo "=== Auditing Gradle Wrapper Executables ==="
           
-          # Check if gradle-wrapper.properties exists and proactively force update its version to match 2026 requirements
           WRAPPER_PROP=$(find . -name "gradle-wrapper.properties" | head -n 1)
           if [ -n "$WRAPPER_PROP" ]; then
             echo "Found existing gradle configuration at: $WRAPPER_PROP"
@@ -143,7 +142,6 @@ jobs:
 
           if [ ! -f gradlew ]; then
             echo "⚠️ Warning: 'gradlew' bootstrapper script is missing in this project!"
-            echo "Generating clean high-compatibility Gradle environment (Version 9.3.1) automatically..."
             gradle wrapper --gradle-version 9.3.1
           else
             echo "Updating existing gradlew script target to 9.3.1..."
@@ -170,12 +168,11 @@ jobs:
           export GRADLE_OPTS="-Dorg.gradle.jvmargs=${{ env.GRADLE_JVM_ARGS }} -Dorg.gradle.workers.max=4"
           echo "Starting production compilation with parameters: $GRADLE_OPTS"
           
-          ./gradlew assembleDebug --stacktrace --no-daemon || {
-            echo "⚠️ Build issue encountered. Forcing execution with modern Java 21 environment..."
-            sudo apt-get install -y openjdk-21-jdk
-            export JAVA_HOME=/usr/lib/jvm/java-21-openjdk-amd64
-            ./gradlew assembleDebug --stacktrace --no-daemon
-          }
+          echo "=== Step A: Hard Cleaning Project Artifacts ==="
+          ./gradlew clean --no-configuration-cache --no-daemon
+          
+          echo "=== Step B: Launching Absolute Compilation Sequence ==="
+          ./gradlew assembleDebug --no-configuration-cache --stacktrace --no-daemon
 
       - name: 9. Post-Compilation Mapping & Diagnostics
         run: |
